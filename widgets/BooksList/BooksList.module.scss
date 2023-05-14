@@ -1,0 +1,46 @@
+@import '@/styles/variables';
+
+.list {
+  @media (min-width: $breakpoint-sm) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+    row-gap: 24px;
+  }
+
+  @media (min-width: 848px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  @media (min-width: 1096px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+.li {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+
+  list-style: none;
+  border-top: 1px solid var(--color-black);
+
+  // &:last-child {
+  //   border-bottom: 1px solid var(--color-black);
+  // }
+
+  @media (min-width: $breakpoint-sm) {
+    padding: 0;
+
+    // width: 224px;
+
+    border: none;
+
+    &:last-child {
+      border: none;
+    }
+  }
+}
+
+.card {
+  height: 100%;
+}
