@@ -1,0 +1,16 @@
+.root {
+  svg {
+    path {
+      stroke: black;
+    }
+  }
+
+  &.active {
+    svg {
+      path {
+        stroke: #e10000;
+        fill: #e10000;
+      }
+    }
+  }
+}
