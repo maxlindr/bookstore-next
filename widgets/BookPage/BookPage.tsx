@@ -1,0 +1,61 @@
+import Image from 'next/image';
+import { IBook } from '@/entities/IBook';
+import {
+  Block,
+  Buttons,
+  Description,
+  ExternaLink,
+  ImageContainer,
+  ImageWrapper,
+  Main,
+  NotAvailable,
+  Price,
+  Root,
+  Title,
+  favoriteBtnSx,
+} from './styled';
+import { BookDetails } from '../BookDetails';
+import { Button, IconButton } from '@mui/material';
+import { Favorite as FavoriteIcon } from '@mui/icons-material';
+import { formatPrice } from '@/utils/formatPrice';
+
+interface IProps {
+  book: IBook;
+  onFavoriteClick?: () => void;
+}
+
+export const BookPage = ({ book, onFavoriteClick }: IProps) => {
+  const { title, price, cover, description, available, favorite } = book;
+
+  return (
+    <Root>
+      <Title variant="h1">{title}</Title>
+
+      <Main>
+        <ImageContainer>
+          <ImageWrapper>
+            <Image src={cover} alt={title} fill style={{ objectFit: 'contain' }} />
+          </ImageWrapper>
+        </ImageContainer>
+
+        <BookDetails book={book} />
+
+        <Block>
+          {available ? <Price paragraph>{formatPrice(price)}</Price> : <NotAvailable>Нет в наличии</NotAvailable>}
+
+          <Buttons>
+            <Button>Добавить в корзину</Button>
+
+            <IconButton sx={favoriteBtnSx} onClick={onFavoriteClick}>
+              <FavoriteIcon fontSize="medium" color={favorite ? 'error' : 'disabled'} />
+            </IconButton>
+          </Buttons>
+        </Block>
+
+        <ExternaLink>Эта книга на Авито</ExternaLink>
+      </Main>
+
+      {description && <Description dangerouslySetInnerHTML={{ __html: description }} />}
+    </Root>
+  );
+};
