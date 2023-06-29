@@ -12,6 +12,10 @@
   margin: 0;
 }
 
+html {
+  overflow-y: hidden;
+}
+
 html,
 body,
 #__next {
@@ -23,6 +27,7 @@ body,
 #__next {
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 
 img {

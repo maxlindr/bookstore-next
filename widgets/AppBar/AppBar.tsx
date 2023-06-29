@@ -12,7 +12,7 @@ export const AppBar = () => {
   const isHomePage = router.pathname === Route.Home;
 
   return (
-    <MUIAppBar position="fixed" className={styles.root}>
+    <MUIAppBar position="relative" className={styles.root}>
       {isHomePage && <Search className={styles.search} />}
       <Nav className={styles.nav} />
     </MUIAppBar>
