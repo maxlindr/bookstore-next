@@ -25,7 +25,7 @@ interface IProps {
 }
 
 export const BookPage = ({ book, onFavoriteClick }: IProps) => {
-  const { title, price, cover, description, available, favorite } = book;
+  const { title, price, cover, description, available, favorite, avito } = book;
 
   return (
     <Root>
@@ -50,9 +50,13 @@ export const BookPage = ({ book, onFavoriteClick }: IProps) => {
               <FavoriteIcon fontSize="medium" color={favorite ? 'error' : 'disabled'} />
             </IconButton>
           </Buttons>
-        </Block>
 
-        <ExternaLink>Эта книга на Авито</ExternaLink>
+          {avito && (
+            <ExternaLink href={avito} target="_blank">
+              Эта книга на Авито
+            </ExternaLink>
+          )}
+        </Block>
       </Main>
 
       {description && <Description dangerouslySetInnerHTML={{ __html: description }} />}

@@ -40,7 +40,7 @@ export const ImageContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
     padding: '48px',
     minHeight: '442px',
-    gridRow: '1 / span 3',
+    gridRow: '1 / span 2',
   },
 }));
 
@@ -76,13 +76,8 @@ export const favoriteBtnSx: SxProps<Theme> = {
 };
 
 export const ExternaLink = styled(Link)<BoxProps>(({ theme }) => ({
-  alignSelf: 'flex-end',
-
-  [theme.breakpoints.up('lg')]: {
-    marginTop: '1.75rem',
-    gridRow: 3,
-    gridColumn: 2,
-  },
+  marginTop: '1.75rem',
+  display: 'block',
 }));
 
 export const Description = styled(Box)(({ theme }) => ({
