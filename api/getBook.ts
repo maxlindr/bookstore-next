@@ -1,25 +1,16 @@
 import { AxiosResponse } from 'axios';
-import { bookMocks } from '@/__mocks__/booksMocks';
 import { IBook } from '@/entities/IBook';
+import { IStrapiBook } from '@/entities/IStrapiBook';
+import { IServerBook } from '@/entities/IServerBook';
+import { axiosInstance } from './axios';
+import { strapiToServer } from './converters';
+import { IStrapiResponse } from './IStrapiResponse';
 
-type Resp = Omit<AxiosResponse<IBook>, 'headers' | 'config'>;
+export const getBook = async (id: IBook['id']): Promise<AxiosResponse<IServerBook>> => {
+  const result = await axiosInstance.get<IStrapiResponse<IStrapiBook>>(`/books/${id}?populate=*`);
 
-export const getBook = async (id: IBook['id']): Promise<Resp> => {
-  const book = bookMocks.find((book) => book.id === id);
-
-  if (!book) {
-    throw {
-      response: {
-        status: 404,
-      },
-    };
-  }
-
-  const resp: Omit<AxiosResponse<IBook>, 'headers' | 'config'> = {
-    data: book,
-    status: 200,
-    statusText: 'OK',
+  return {
+    ...result,
+    data: strapiToServer(result.data.data),
   };
-
-  return resp;
 };
