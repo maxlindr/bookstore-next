@@ -22,5 +22,6 @@ module.exports = {
   rules: {
     'no-console': 'warn',
     'prettier/prettier': ['error'],
+    '@typescript-eslint/ban-ts-comment': ['warn'],
   },
 };
