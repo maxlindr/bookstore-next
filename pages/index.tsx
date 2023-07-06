@@ -8,6 +8,7 @@ import { IBook } from '@/entities/IBook';
 import { AppBar } from '@/widgets/AppBar';
 import { HomePage } from '@/widgets/HomePage';
 import { PageLayout } from '@/widgets/PageLayout';
+import { FAVORITES_COOKIE_NAME } from '@/utils/constants';
 
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const books = useAppSelector(selectBooks);
@@ -25,7 +26,8 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(
   (store) => async (context: GetServerSidePropsContext) => {
-    const { favorites: cookieFavorites } = context.req.cookies;
+    const cookies = context.req.cookies;
+    const cookieFavorites = cookies[FAVORITES_COOKIE_NAME];
     const favorites = cookieFavorites ? JSON.parse(cookieFavorites) : [];
 
     const { data: books } = await getBooks();

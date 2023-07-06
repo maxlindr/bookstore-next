@@ -12,6 +12,7 @@ import { getBook } from '@/api/getBook';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { selectFavorites, toggleFavorite } from '@/store/sharedSlice';
 import { IBook } from '@/entities/IBook';
+import { FAVORITES_COOKIE_NAME } from '@/utils/constants';
 
 export default function Book({ book: serverBook }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
@@ -44,7 +45,8 @@ export default function Book({ book: serverBook }: InferGetServerSidePropsType<t
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const bookId = Number(context.query.bookId);
-  const { favorites: cookieFavorites } = context.req.cookies;
+  const cookies = context.req.cookies;
+  const cookieFavorites = cookies[FAVORITES_COOKIE_NAME];
   const favorites = cookieFavorites ? JSON.parse(cookieFavorites) : [];
 
   try {
