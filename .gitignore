@@ -36,3 +36,5 @@ next-env.d.ts
 
 # other
 todo.md
+.env.development
+.env.production
