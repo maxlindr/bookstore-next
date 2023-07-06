@@ -19,7 +19,7 @@ export const AppBar = () => {
   };
 
   return (
-    <MUIAppBar position="relative" className={styles.root}>
+    <MUIAppBar position="relative">
       {isHomePage && <Search className={styles.search} onSubmit={handleSearchSubmit} />}
       <Nav className={styles.nav} />
     </MUIAppBar>
