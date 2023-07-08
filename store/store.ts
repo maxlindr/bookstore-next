@@ -1,12 +1,12 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
-import { booksSlice, setBooks } from './booksSlice';
+import { booksSlice } from './booksSlice';
 import { sharedSlice } from './sharedSlice';
-import { FAVORITES_COOKIE_NAME } from '@/utils/constants';
+
+const FAVORITES_KEY_NAME = 'favorites';
 
 const listenerMiddleware = createListenerMiddleware();
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // год
 
 listenerMiddleware.startListening({
   effect: async (_action, listenerApi) => {
@@ -14,15 +14,7 @@ listenerMiddleware.startListening({
 
     if (typeof document !== 'undefined') {
       const favorites = state.shared.favorites;
-      document.cookie = `${FAVORITES_COOKIE_NAME}=${JSON.stringify(favorites)};path=/;max-age=${COOKIE_MAX_AGE}`;
-      const oldBooks = state.books.books;
-
-      const newBooks = oldBooks.map((book) => ({
-        ...book,
-        favorite: favorites.includes(book.id),
-      }));
-
-      listenerApi.dispatch(setBooks(newBooks));
+      localStorage.setItem(FAVORITES_KEY_NAME, JSON.stringify(favorites));
     }
   },
   predicate: (_action, currentState, previousState) => {
@@ -31,7 +23,7 @@ listenerMiddleware.startListening({
 });
 
 const createStore = () => {
-  const favorites = typeof window !== 'undefined' ? localStorage.getItem('favorites') : null;
+  const favorites = typeof window !== 'undefined' ? localStorage.getItem(FAVORITES_KEY_NAME) : null;
 
   return configureStore({
     reducer: {

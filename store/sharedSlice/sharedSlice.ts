@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
 import { IBook } from '@/entities/IBook';
 
 interface BooksState {
@@ -28,15 +27,6 @@ export const sharedSlice = createSlice({
         newFavorites.splice(favoriteIndex, 1);
         state.favorites = newFavorites;
       }
-    },
-  },
-
-  extraReducers: {
-    [HYDRATE]: (state, action) => {
-      return {
-        ...state,
-        ...action.payload.shared,
-      };
     },
   },
 });

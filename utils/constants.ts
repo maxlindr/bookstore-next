@@ -3,5 +3,3 @@ export enum Route {
   Cart = '/cart',
   Favorites = '/favorites',
 }
-
-export const FAVORITES_COOKIE_NAME = 'favorites';

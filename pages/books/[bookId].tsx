@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetStaticPaths, GetStaticPropsContext, InferGetServerSidePropsType } from 'next';
+import { ParsedUrlQuery } from 'querystring';
 
 import { useTheme } from '@mui/material/styles';
 import { PageLayout } from '@/widgets/PageLayout';
@@ -8,21 +10,23 @@ import { BookPage } from '@/widgets/BookPage';
 import { AppBar } from '@/widgets/AppBar';
 
 import { useMediaQuery } from '@mui/material';
-import { getBook } from '@/api/getBook';
+import { getBook, getBooks } from '@/api';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { selectFavorites, toggleFavorite } from '@/store/sharedSlice';
 import { IBook } from '@/entities/IBook';
-import { FAVORITES_COOKIE_NAME } from '@/utils/constants';
 
-export default function Book({ book: serverBook }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Book({ book: serverBook }: InferGetServerSidePropsType<typeof getStaticProps>) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const favorites = useAppSelector(selectFavorites);
+  const [book, setBook] = useState<IBook>(() => ({ ...serverBook, favorite: false }));
 
-  const book = {
-    ...serverBook,
-    favorite: favorites.includes(serverBook.id),
-  };
+  useEffect(() => {
+    setBook({
+      ...serverBook,
+      favorite: favorites.includes(serverBook.id),
+    });
+  }, [serverBook, favorites]);
 
   const dispatch = useAppDispatch();
 
@@ -43,21 +47,28 @@ export default function Book({ book: serverBook }: InferGetServerSidePropsType<t
   );
 }
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const bookId = Number(context.query.bookId);
-  const cookies = context.req.cookies;
-  const cookieFavorites = cookies[FAVORITES_COOKIE_NAME];
-  const favorites = cookieFavorites ? JSON.parse(cookieFavorites) : [];
+interface Params extends ParsedUrlQuery {
+  bookId: string;
+}
+
+export const getStaticPaths: GetStaticPaths<Params> = async () => {
+  const { data: books } = await getBooks();
+
+  const paths = books.map((book) => ({
+    params: { bookId: String(book.id) },
+  }));
+
+  return { paths, fallback: false };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext<Params>) => {
+  const { params } = context;
+  const bookId = Number(params?.bookId);
 
   try {
     const { data: book } = await getBook(bookId);
 
-    const bookWithFavorite: IBook = {
-      ...book,
-      favorite: favorites.includes(book.id),
-    };
-
-    return { props: { book: bookWithFavorite } };
+    return { props: { book }, revalidate: 600 };
   } catch (error) {
     if ((error as AxiosError).response?.status === 404) {
       return {
