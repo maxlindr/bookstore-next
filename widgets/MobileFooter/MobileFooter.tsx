@@ -1,12 +1,14 @@
-import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Paper, Badge } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useRouter } from 'next/router';
 import { Route } from '@/utils/constants';
+import { useTotalFavorites } from '@/hooks';
 
 export const MobileFooter = () => {
   const router = useRouter();
+  const totalFavorites = useTotalFavorites();
 
   const handleNavChange = (_: React.SyntheticEvent, value: Route) => {
     let path = Route.Home;
@@ -35,7 +37,14 @@ export const MobileFooter = () => {
 
         <BottomNavigationAction icon={<ShoppingCartIcon />} value={Route.Cart} />
 
-        <BottomNavigationAction icon={<FavoriteIcon />} value={Route.Favorites} />
+        <BottomNavigationAction
+          icon={
+            <Badge badgeContent={totalFavorites} color="error">
+              <FavoriteIcon />
+            </Badge>
+          }
+          value={Route.Favorites}
+        />
       </BottomNavigation>
     </Paper>
   );
