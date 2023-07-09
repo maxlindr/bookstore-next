@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
 import { GetStaticPaths, GetStaticPropsContext, InferGetServerSidePropsType } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { IBook } from '@/entities/IBook';
 
 import { useTheme } from '@mui/material/styles';
 import { PageLayout } from '@/widgets/PageLayout';
@@ -12,29 +10,17 @@ import { AppBar } from '@/widgets/AppBar';
 
 import { useMediaQuery } from '@mui/material';
 import { getBook, getBooks } from '@/api';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { addToCart, removeFromCart, selectCartIDs, selectFavorites, toggleFavorite } from '@/store/sharedSlice';
+import { useAppDispatch } from '@/store';
+import { addToCart, removeFromCart, toggleFavorite } from '@/store/sharedSlice';
+import { useBookInCart, useServerBookToClient } from '@/hooks';
 
 export default function Book({ book: serverBook }: InferGetServerSidePropsType<typeof getStaticProps>) {
   const { id: bookId } = serverBook;
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-  const favorites = useAppSelector(selectFavorites);
-  const [book, setBook] = useState<IBook>(() => ({ ...serverBook, favorite: false }));
-  const [inCart, setInCart] = useState(false);
-  const cartIds = useAppSelector(selectCartIDs);
-
-  useEffect(() => {
-    setBook({
-      ...serverBook,
-      favorite: favorites.includes(serverBook.id),
-    });
-  }, [serverBook, favorites]);
-
-  useEffect(() => {
-    setInCart(cartIds.includes(bookId));
-  }, [bookId, cartIds]);
+  const book = useServerBookToClient(serverBook);
+  const isBookInCart = useBookInCart(serverBook);
 
   const handleFavoriteClick = () => {
     dispatch(toggleFavorite(bookId));
@@ -58,7 +44,7 @@ export default function Book({ book: serverBook }: InferGetServerSidePropsType<t
     >
       <Component
         book={book}
-        inCart={inCart}
+        inCart={isBookInCart}
         onFavoriteClick={handleFavoriteClick}
         onAddToCardClick={handleAddToCart}
         onRemoveFromCartClick={handleRemoveFromCart}
