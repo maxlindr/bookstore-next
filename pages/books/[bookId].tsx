@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
 import { GetStaticPaths, GetStaticPropsContext, InferGetServerSidePropsType } from 'next';
 import { ParsedUrlQuery } from 'querystring';
+import { IBook } from '@/entities/IBook';
 
 import { useTheme } from '@mui/material/styles';
 import { PageLayout } from '@/widgets/PageLayout';
@@ -12,14 +13,17 @@ import { AppBar } from '@/widgets/AppBar';
 import { useMediaQuery } from '@mui/material';
 import { getBook, getBooks } from '@/api';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectFavorites, toggleFavorite } from '@/store/sharedSlice';
-import { IBook } from '@/entities/IBook';
+import { addToCart, removeFromCart, selectCartIDs, selectFavorites, toggleFavorite } from '@/store/sharedSlice';
 
 export default function Book({ book: serverBook }: InferGetServerSidePropsType<typeof getStaticProps>) {
+  const { id: bookId } = serverBook;
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const favorites = useAppSelector(selectFavorites);
   const [book, setBook] = useState<IBook>(() => ({ ...serverBook, favorite: false }));
+  const [inCart, setInCart] = useState(false);
+  const cartIds = useAppSelector(selectCartIDs);
 
   useEffect(() => {
     setBook({
@@ -28,10 +32,20 @@ export default function Book({ book: serverBook }: InferGetServerSidePropsType<t
     });
   }, [serverBook, favorites]);
 
-  const dispatch = useAppDispatch();
+  useEffect(() => {
+    setInCart(cartIds.includes(bookId));
+  }, [bookId, cartIds]);
 
   const handleFavoriteClick = () => {
-    dispatch(toggleFavorite(book.id));
+    dispatch(toggleFavorite(bookId));
+  };
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(bookId));
+  };
+
+  const handleRemoveFromCart = () => {
+    dispatch(removeFromCart(bookId));
   };
 
   const Component = isDesktop ? BookPage : BookPageMobile;
@@ -42,7 +56,13 @@ export default function Book({ book: serverBook }: InferGetServerSidePropsType<t
       description={book.description}
       appBar={isDesktop ? <AppBar /> : undefined}
     >
-      {<Component book={book} onFavoriteClick={handleFavoriteClick} />}
+      <Component
+        book={book}
+        inCart={inCart}
+        onFavoriteClick={handleFavoriteClick}
+        onAddToCardClick={handleAddToCart}
+        onRemoveFromCartClick={handleRemoveFromCart}
+      />
     </PageLayout>
   );
 }

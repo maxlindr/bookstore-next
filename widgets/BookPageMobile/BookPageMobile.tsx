@@ -14,10 +14,13 @@ import { formatPrice } from '@/utils/formatPrice';
 
 interface IProps {
   book: IBook;
+  inCart: boolean;
   onFavoriteClick?: () => void;
+  onAddToCardClick?: () => void;
+  onRemoveFromCartClick?: () => void;
 }
 
-export const BookPageMobile = ({ book, onFavoriteClick }: IProps) => {
+export const BookPageMobile = ({ book, inCart, onFavoriteClick, onAddToCardClick, onRemoveFromCartClick }: IProps) => {
   const { title, price, description, favorite, cover } = book;
   const [detailsVisible, setDetailsVisible] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
@@ -56,7 +59,11 @@ export const BookPageMobile = ({ book, onFavoriteClick }: IProps) => {
         </Backdrop>
       )}
 
-      <Button>Добавить в корзину</Button>
+      {inCart ? (
+        <Button onClick={onRemoveFromCartClick}>Удалить из корзины</Button>
+      ) : (
+        <Button onClick={onAddToCardClick}>Добавить в корзину</Button>
+      )}
     </div>
   );
 };

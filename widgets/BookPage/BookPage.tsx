@@ -21,10 +21,13 @@ import { formatPrice } from '@/utils/formatPrice';
 
 interface IProps {
   book: IBook;
+  inCart: boolean;
   onFavoriteClick?: () => void;
+  onAddToCardClick?: () => void;
+  onRemoveFromCartClick?: () => void;
 }
 
-export const BookPage = ({ book, onFavoriteClick }: IProps) => {
+export const BookPage = ({ book, inCart, onFavoriteClick, onAddToCardClick, onRemoveFromCartClick }: IProps) => {
   const { title, price, cover, description, available, favorite, avito } = book;
 
   return (
@@ -44,7 +47,11 @@ export const BookPage = ({ book, onFavoriteClick }: IProps) => {
           {available ? <Price paragraph>{formatPrice(price)}</Price> : <NotAvailable>Нет в наличии</NotAvailable>}
 
           <Buttons>
-            <Button>Добавить в корзину</Button>
+            {inCart ? (
+              <Button onClick={onRemoveFromCartClick}>Удалить из корзины</Button>
+            ) : (
+              <Button onClick={onAddToCardClick}>Добавить в корзину</Button>
+            )}
 
             <IconButton sx={favoriteBtnSx} onClick={onFavoriteClick}>
               <FavoriteIcon fontSize="medium" color={favorite ? 'error' : 'disabled'} />

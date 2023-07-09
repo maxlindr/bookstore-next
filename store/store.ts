@@ -5,10 +5,11 @@ import { booksSlice } from './booksSlice';
 import { sharedSlice } from './sharedSlice';
 
 const FAVORITES_KEY_NAME = 'favorites';
+const CART_KEY_NAME = 'cart';
 
-const listenerMiddleware = createListenerMiddleware();
+const favoriteslistenerMiddleware = createListenerMiddleware();
 
-listenerMiddleware.startListening({
+favoriteslistenerMiddleware.startListening({
   effect: async (_action, listenerApi) => {
     const state = listenerApi.getState() as RootState;
 
@@ -22,8 +23,25 @@ listenerMiddleware.startListening({
   },
 });
 
+const cartListenerMiddleware = createListenerMiddleware();
+
+cartListenerMiddleware.startListening({
+  effect: async (_action, listenerApi) => {
+    const state = listenerApi.getState() as RootState;
+
+    if (typeof document !== 'undefined') {
+      const cart = state.shared.cart;
+      localStorage.setItem(CART_KEY_NAME, JSON.stringify(cart));
+    }
+  },
+  predicate: (_action, currentState, previousState) => {
+    return (currentState as RootState).shared.cart !== (previousState as RootState).shared.cart;
+  },
+});
+
 const createStore = () => {
   const favorites = typeof window !== 'undefined' ? localStorage.getItem(FAVORITES_KEY_NAME) : null;
+  const cart = typeof window !== 'undefined' ? localStorage.getItem(CART_KEY_NAME) : null;
 
   return configureStore({
     reducer: {
@@ -33,9 +51,11 @@ const createStore = () => {
     preloadedState: {
       shared: {
         favorites: favorites ? JSON.parse(favorites) : [],
+        cart: cart ? JSON.parse(cart) : [],
       },
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().prepend(favoriteslistenerMiddleware.middleware, cartListenerMiddleware.middleware),
   });
 };
 

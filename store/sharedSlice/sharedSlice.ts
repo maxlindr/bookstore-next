@@ -3,10 +3,12 @@ import { IBook } from '@/entities/IBook';
 
 interface BooksState {
   favorites: IBook['id'][];
+  cart: IBook['id'][];
 }
 
 const initialState: BooksState = {
   favorites: [],
+  cart: [],
 };
 
 export const sharedSlice = createSlice({
@@ -28,8 +30,24 @@ export const sharedSlice = createSlice({
         state.favorites = newFavorites;
       }
     },
+    setCart(state, action: PayloadAction<IBook['id'][]>) {
+      state.cart = action.payload;
+    },
+    addToCart(state, { payload: id }: PayloadAction<IBook['id']>) {
+      if (!state.cart.includes(id)) {
+        state.cart = [...state.cart, id];
+      }
+    },
+    removeFromCart(state, { payload: id }: PayloadAction<IBook['id']>) {
+      if (state.cart.includes(id)) {
+        const index = state.cart.findIndex((itemid) => itemid === id);
+        const newCart = state.cart.slice();
+        newCart.splice(index, 1);
+        state.cart = newCart;
+      }
+    },
   },
 });
 
-export const { setFavorites, toggleFavorite } = sharedSlice.actions;
+export const { setFavorites, toggleFavorite, setCart, addToCart, removeFromCart } = sharedSlice.actions;
 export default sharedSlice.reducer;

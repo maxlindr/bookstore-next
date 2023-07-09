@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { Route } from '@/utils/constants';
 import { useTotalFavorites } from '@/hooks';
+import { useTotalCartItems } from '@/hooks/useTotalCartItems';
 
 import { Badge, IconButton } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
@@ -15,6 +16,7 @@ const btnSX = { padding: 0, marginLeft: '1rem' };
 
 export const Nav = ({ className }: Props) => {
   const router = useRouter();
+  const totalCartItems = useTotalCartItems();
   const totalFavorites = useTotalFavorites();
 
   return (
@@ -27,7 +29,9 @@ export const Nav = ({ className }: Props) => {
 
       {router.pathname !== Route.Cart && (
         <IconButton size="large" href={Route.Cart} aria-label="Корзина" sx={btnSX}>
-          <ShoppingCartOutlinedIcon />
+          <Badge badgeContent={totalCartItems} color="error">
+            <ShoppingCartOutlinedIcon />
+          </Badge>
         </IconButton>
       )}
 

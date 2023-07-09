@@ -5,9 +5,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useRouter } from 'next/router';
 import { Route } from '@/utils/constants';
 import { useTotalFavorites } from '@/hooks';
+import { useTotalCartItems } from '@/hooks/useTotalCartItems';
 
 export const MobileFooter = () => {
   const router = useRouter();
+  const totalCartItems = useTotalCartItems();
   const totalFavorites = useTotalFavorites();
 
   const handleNavChange = (_: React.SyntheticEvent, value: Route) => {
@@ -35,7 +37,14 @@ export const MobileFooter = () => {
       <BottomNavigation onChange={handleNavChange} value={router.route}>
         <BottomNavigationAction icon={<HomeIcon />} value={Route.Home} />
 
-        <BottomNavigationAction icon={<ShoppingCartIcon />} value={Route.Cart} />
+        <BottomNavigationAction
+          icon={
+            <Badge badgeContent={totalCartItems} color="error">
+              <ShoppingCartIcon />
+            </Badge>
+          }
+          value={Route.Cart}
+        />
 
         <BottomNavigationAction
           icon={
