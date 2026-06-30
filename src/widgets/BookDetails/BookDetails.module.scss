@@ -1,0 +1,12 @@
+.record {
+  display: flex;
+
+  & + & {
+    margin-top: 8px;
+  }
+
+  dt {
+    margin-right: 0.4em;
+    font-weight: 600;
+  }
+}

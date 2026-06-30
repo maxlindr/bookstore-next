@@ -1,7 +1,20 @@
-
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // reactStrictMode: false,
+  allowedDevOrigins: [
+    process.env.NEXT_PUBLIC_API_HOSTNAME!,
+    process.env.NEXT_PUBLIC_API_ORIGIN!,
+  ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: process.env.NEXT_PUBLIC_API_PROTOCOL as 'http' | 'https',
+        hostname: process.env.NEXT_PUBLIC_API_HOSTNAME!,
+      },
+    ],
+    dangerouslyAllowLocalIP: true,
+  },
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     // @ts-ignore
@@ -27,20 +40,6 @@ const nextConfig: NextConfig = {
     fileLoaderRule.exclude = /\.svg$/i;
 
     return config;
-  },
-  // cacheComponents: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-      },
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-      },
-    ],
-    dangerouslyAllowLocalIP: true,
   },
 };
 

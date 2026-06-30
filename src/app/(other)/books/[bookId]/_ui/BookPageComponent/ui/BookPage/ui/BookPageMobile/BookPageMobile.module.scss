@@ -1,0 +1,53 @@
+@use '@/styles/variables' as *;
+
+.root {
+  margin: 0 auto;
+  padding-top: 48px;
+  padding-bottom: 48px;
+
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
+  flex-direction: column;
+  width: calc(100% - 32px);
+
+  @media (min-width: $breakpoint-sm) {
+    display: none;
+  }
+}
+
+.title {
+  font-size: 24px;
+  text-align: center;
+}
+
+.imageWrapper {
+  margin-top: 30px;
+
+  position: relative;
+
+  flex-grow: 1;
+  max-height: 40%;
+  height: 200px; // todo:
+}
+
+.image {
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.actionButtons {
+  padding: 24px 0 12px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  gap: 30px;
+}
+
+.price {
+  padding-top: 12px;
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  text-align: center;
+}
